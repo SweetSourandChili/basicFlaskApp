@@ -9,13 +9,14 @@ mongo_uri = os.environ['MONGO_URI']
 app = Flask(__name__)
 client = MongoClient(mongo_uri)
 
-
 @app.route('/')
 def hello_world():
     return 'Hello, world!'
 
+
 if __name__ == '__main__':
-    app.run()
+    port = int(os.environ.get('PORT', 8080))
+    app.run(debug=True, host='0.0.0.0', port=port)
 
 
 
