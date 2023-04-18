@@ -3,14 +3,13 @@ import os
 import ssl
 from pymongo import MongoClient
 
-# Retrieve the MongoDB Atlas URI from the environment variables
 mongo_uri = os.environ['MONGO_URI']
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 client = MongoClient(mongo_uri)
 
 @app.route('/')
-def hello_world():
+def index():
     return render_template("index.html")
 
 

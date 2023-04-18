@@ -1,0 +1,22 @@
+html {
+  height: 100%;
+}
+
+body {
+  background-color: lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+h1 {
+  color: darkblue;
+  text-align: center;
+}
+
+.welcome{
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
