@@ -1,16 +1,15 @@
-from flask import Flask, render_template
+import flask as fl
 import os
-import ssl
-from pymongo import MongoClient
+import pymongo as pm
 
 mongo_uri = os.environ['MONGO_URI']
 
-app = Flask(__name__, static_folder='static')
-client = MongoClient(mongo_uri)
+app = fl.Flask(__name__, static_folder='static')
+client = pm.MongoClient(mongo_uri)
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return fl.render_template("index.html")
 
 
 if __name__ == '__main__':
