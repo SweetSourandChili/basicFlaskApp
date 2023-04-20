@@ -7,13 +7,59 @@
 </head>
 <body>
     <div class="container">
+
         <div class="welcome">
             <h1>Welcome to the website!</h1>
         </div>
-        <div class="loginOptions">
-            <button class="loginButton bigButton">User Login</button>
-            <button class="loginButton smallButton">Admin Login</button>
-        </div>
+
+		<div>
+			<div class="loginOptions">
+				<button id="userLogin" class="loginButton bigButton">User Login</button>
+				<button id="adminLogin" class="loginButton smallButton">Admin Login</button>
+				<button id="signIn" class="loginButton smallButton">Sign In</button>
+			</div>
+			<div class="loginTables">
+				<table id="userLoginTable" class="table" style="display: none">
+					<tr>
+						<td>Username:</td>
+						<td><label>
+							<input type="text" name="username">
+						</label></td>
+					</tr>
+					<tr>
+						<td>Password:</td>
+						<td><label>
+							<input type="password" name="password">
+						</label></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><button id="readUser" class="loginButton bigButton">Login</button></td>
+					</tr>
+				</table>
+
+				<table id="adminLoginTable" class="table" style="display: none">
+					<tr>
+						<td>Username:</td>
+						<td><label>
+							<input type="text" name="username">
+						</label></td>
+					</tr>
+					<tr>
+						<td>Password:</td>
+						<td><label>
+							<input type="password" name="password">
+						</label></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><button id="readAdmin" class="loginButton bigButton">Admin Login</button></td>
+					</tr>
+				</table>
+			</div>
+		</div>
     </div>
+
+	<script src="{{ url_for('static', filename='js/buttonControl.js') }}"></script>
 </body>
 </html>
