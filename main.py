@@ -1,8 +1,7 @@
-import certifi
 import flask as fl
-import ssl
-import os
 import pymongo as pm
+import certifi
+import os
 
 mongo_uri = os.environ['MONGO_URI']
 
@@ -10,6 +9,7 @@ app = fl.Flask(__name__, static_folder='static')
 client = pm.MongoClient(mongo_uri, ssl_ca_certs=certifi.where())
 db = client['webData']
 
+users = db['userData']
 
 @app.route('/')
 def index():
@@ -21,27 +21,48 @@ def loginUser():
     username = fl.request.form['username']
     password = fl.request.form['password']
     # TODO: check to send token here
-    return fl.jsonify({'success': True, 'message': 'Login successful'}), 200
-
+    user = users.find_one({"username": username, "admin": False})
+    if user is None:
+        return fl.jsonify({'success': True, 'message': 'This user is not registered!'}), 405
+    else:
+        if user["password"] == password:
+            return fl.redirect("dashboard.html")
+        else:
+            return fl.jsonify({'success': True, 'message': 'Wrong password!'.format(username)}), 406
 
 @app.route('/loginAdmin', methods=['POST'])
 def loginAdmin():
     username = fl.request.form['username']
     password = fl.request.form['password']
-    # TODO: check to send token here
-    return fl.jsonify({'success': True, 'message': 'Login successful'}), 200
+    user = users.find_one({"username": username, "admin": True})
+    if user is None:
+        return fl.jsonify({'success': True, 'message': 'This admin is not registered!'}), 405
+    else:
+        if user["password"] == password:
+            return fl.redirect("admin.html")
+        else:
+            return fl.jsonify({'success': True, 'message': 'Wrong password!'}), 406
 
 
 @app.route('/getData', methods=['POST'])
 def getData():
-    print("here")
     try:
         db.command('ping')
-        print("here")
         return fl.jsonify({'success': True, 'message': 'Login successful'}), 200
     except Exception as e:
         print(str(e))
         return fl.jsonify({'success': False, 'message': 'Login successful'}), 505
+
+
+@app.route('/signIn', methods=['GET', 'POST'])
+def signIn():
+    return fl.redirect(fl.url_for('dashboard'))
+
+
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    print("here")
+    return fl.render_template('dashboard.html')
 
 
 if __name__ == '__main__':
