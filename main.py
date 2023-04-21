@@ -1,11 +1,13 @@
+import certifi
 import flask as fl
+import ssl
 import os
 import pymongo as pm
 
 mongo_uri = os.environ['MONGO_URI']
 
 app = fl.Flask(__name__, static_folder='static')
-client = pm.MongoClient(mongo_uri)
+client = pm.MongoClient(mongo_uri, ssl_ca_certs=certifi.where())
 db = client['webData']
 
 
