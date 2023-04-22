@@ -6,60 +6,43 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="container">
+<div class="container">
 
-        <div class="welcome">
-            <h1>Welcome to the website!</h1>
-        </div>
-
-		<div>
-			<div class="loginOptions">
-				<button id="userLogin" class="loginButton bigButton">User Login</button>
-				<button id="adminLogin" class="loginButton smallButton">Admin Login</button>
-				<button id="signIn" class="loginButton smallButton">Sign In</button>
-			</div>
-			<div class="loginTables">
-				<table id="userLoginTable" class="table" style="display: none">
-					<tr>
-						<td>Username:</td>
-						<td><label>
-							<input type="text" name="username">
-						</label></td>
-					</tr>
-					<tr>
-						<td>Password:</td>
-						<td><label>
-							<input type="password" name="password">
-						</label></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><button id="readUser" class="loginButton bigButton">Login</button></td>
-					</tr>
-				</table>
-
-				<table id="adminLoginTable" class="table" style="display: none">
-					<tr>
-						<td>Username:</td>
-						<td><label>
-							<input type="text" name="username">
-						</label></td>
-					</tr>
-					<tr>
-						<td>Password:</td>
-						<td><label>
-							<input type="password" name="password">
-						</label></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><button id="readAdmin" class="loginButton bigButton">Admin Login</button></td>
-					</tr>
-				</table>
-			</div>
-		</div>
+    <div class="welcome" id="welcome" data-logged-in="{{ 'username' in session }}">
+        <h1>Welcome to the website!</h1>
     </div>
 
-	<script src="{{ url_for('static', filename='js/buttonControl.js') }}"></script>
+    <div id="loginButtonDiv" class="section">
+        <div class="loginOptions">
+            <button id="userLogin" class="loginButton bigButton">Login</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <label for="filters">Choose a filter:</label>
+        <select name="filters" id="filters">
+            <option value="noFilter">-</option>
+            <option value="highR">Highest Rating</option>
+            <option value="lowR">Lowest Rating</option>
+            <option value="CtE">Cheap to Expensive</option>
+            <option value="EtC">Expensive to Cheap</option>
+        </select>
+
+        <label for="items">Choose a car:</label>
+        <select name="items" id="items">
+            <option value="Clothing">Clothing</option>
+            <option value="ComputerComponents">Computer Components</option>
+            <option value="Monitors">Monitors</option>
+            <option value="Snacks">Snacks</option>
+        </select>
+
+        <button id="filterButton" class="loginButton bigButton">Apply</button>
+    </div>
+
+    <div class="products">
+
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 </html>

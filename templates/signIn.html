@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to the Sign In</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+	<div>
+		<div class="welcome">
+			<h1>Sign In</h1>
+		</div>
+		<div class="loginTables">
+			<table id="signInTable" class="table">
+				<tr>
+					<td>Username:</td>
+					<td><label>
+						<input type="text" name="username">
+					</label></td>
+				</tr>
+				<tr>
+					<td>Password:</td>
+					<td><label>
+						<input type="password" name="password">
+					</label></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><button id="readSign" class="loginButton bigButton">Sign In</button></td>
+					<td><button id="backLogin" class="loginButton bigButton" style="display: none">Back to Login</button></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+<script>
+	let readSign = document.getElementById("readSign");
+	let signTable = document.getElementById("signInTable");
+	let backButton = document.getElementById("backLogin");
+
+	readSign.addEventListener("click", function() {
+     	const username = signTable.querySelector('input[name="username"]').value;
+		const password = signTable.querySelector('input[name="password"]').value;
+
+		 const xhr = new XMLHttpRequest();
+		 xhr.open('POST', '/signIn');
+		 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		 xhr.onload = function() {
+			  const resp = JSON.parse(xhr.responseText);
+			  if (xhr.status === 200) {
+				   backButton.style.display = "";
+			  } else {
+				   alert(resp.message);
+			  }
+		 };
+		 xhr.send(`username=${username}&password=${password}`);
+	});
+
+	backButton.addEventListener("click", function() {
+     	window.location.href = "/";
+	});
+</script>
+</html>
