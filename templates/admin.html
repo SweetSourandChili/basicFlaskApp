@@ -45,7 +45,7 @@
 		<input type="text" id="seller" name="seller"><br><br>
 
 		<label for="imageLink">Image hyperlink:</label>
-		<input type="text" id="imageLink" name="imageLink"><br><br>
+		<input type="text" id="imageLink" name="image_link"><br><br>
 
 		<label for="size">Size:</label>
 		<input type="text" id="size" name="size"><br><br>
@@ -57,10 +57,11 @@
 		<input type="text" id="spec" name="spec"><br><br>
 
 		<label for="itemType">Item type:</label>
-		<select id="itemType" name="itemType">
-			<option value="option1">Option 1</option>
-			<option value="option2">Option 2</option>
-			<option value="option3">Option 3</option>
+		<select id="itemType" name="item_type">
+			<option value=0>Clothing</option>
+			<option value=1>Computer Components</option>
+			<option value=2>Monitors</option>
+			<option value=3>Snacks</option>
 		</select><br><br>
 
 		<p></p>
@@ -70,10 +71,11 @@
 	<h2>Section 4: Remove Item</h2>
 	<form id="removeItemForm">
 		<label for="removeItemType">Item type:</label>
-		<select id="removeItemType" name="itemType">
-			<option value="option1">Option 1</option>
-			<option value="option2">Option 2</option>
-			<option value="option3">Option 3</option>
+		<select id="removeItemType" name="item_type">
+			<option value=0>Clothing</option>
+			<option value=1>Computer Components</option>
+			<option value=2>Monitors</option>
+			<option value=3>Snacks</option>
 		</select><br><br>
 
 		<label for="removeItemName">Name:</label>

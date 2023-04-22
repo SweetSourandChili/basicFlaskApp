@@ -19,7 +19,7 @@ getUser.addEventListener("click", function() {
                alert(resp.message);
           }
      };
-     xhr.send(`username=${username}&password=${password}admin=False`);
+     xhr.send(`username=${username}&password=${password}&admin=False`);
 });
 
 getAdmin.addEventListener("click", function() {

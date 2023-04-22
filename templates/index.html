@@ -28,19 +28,18 @@
             <option value="EtC">Expensive to Cheap</option>
         </select>
 
-        <label for="items">Choose a car:</label>
+        <label for="items">Choose an item type:</label>
         <select name="items" id="items">
-            <option value="Clothing">Clothing</option>
-            <option value="ComputerComponents">Computer Components</option>
-            <option value="Monitors">Monitors</option>
-            <option value="Snacks">Snacks</option>
+            <option value=0>Clothing</option>
+            <option value=1>Computer Components</option>
+            <option value=2>Monitors</option>
+            <option value=3>Snacks</option>
         </select>
 
         <button id="filterButton" class="loginButton bigButton">Apply</button>
     </div>
 
-    <div class="products">
-
+    <div id="products" class="products">
     </div>
 </div>
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
