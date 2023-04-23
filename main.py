@@ -104,7 +104,7 @@ def item():
         query = {
             "name": fl.request.form.get('name'),
             "description": fl.request.form.get('description'),
-            "price": fl.request.form.get('price'),
+            "price": int(fl.request.form.get('price')),
             "currency": "$",
             "seller": fl.request.form.get('seller'),
             "image": fl.request.form.get('image_link'),
@@ -185,21 +185,26 @@ def item():
 
 @app.route('/list', methods=['POST'])
 def listItems():
-    filter_num = int(fl.request.form.get('filter_type'))
-    type = int(fl.request.form.get('item_type'))
-
-    if filter_num == -1:
-        documents = list(item_types.get(type).find({}, {'_id': 0}))
-    elif filter_num == 0:  # Highest Rating
-        documents = list(item_types.get(type).find({}, {'_id': 0}).sort('rating', 1))
-    elif filter_num == 1:  # Lowest Rating
-        documents = list(item_types.get(type).find({}, {'_id': 0}).sort('rating', 1))
-    elif filter_num == 2:  # Cheap to Expensive
-        documents = list(item_types.get(type).find({}, {'_id': 0}).sort('price', 1))
-    elif filter_num == 3:  # Expensive to Cheap
-        documents = list(item_types.get(type).find({}, {'_id': 0}).sort('price', 1))
-    else:
+    onload = fl.request.form.get('onload')
+    if onload == 'True':
         documents = list()
+        for value in item_types.values():
+            documents += list(value.find({}, {'_id': 0}))
+    else:
+        filter_num = int(fl.request.form.get('filter_type'))
+        type = int(fl.request.form.get('item_type'))
+        if filter_num == -1:
+            documents = list(item_types.get(type).find({}, {'_id': 0}))
+        elif filter_num == 0:  # Highest Rating
+            documents = list(item_types.get(type).find({}, {'_id': 0}).sort('rating', -1))
+        elif filter_num == 1:  # Lowest Rating
+            documents = list(item_types.get(type).find({}, {'_id': 0}).sort('rating', 1))
+        elif filter_num == 2:  # Cheap to Expensive
+            documents = list(item_types.get(type).find({}, {'_id': 0}).sort('price', 1))
+        elif filter_num == 3:  # Expensive to Cheap
+            documents = list(item_types.get(type).find({}, {'_id': 0}).sort('price', -1))
+        else:
+            documents = list()
 
     for document in documents:
         list_reviews = list()

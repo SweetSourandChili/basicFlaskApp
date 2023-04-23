@@ -11,6 +11,7 @@ window.onload = function () {
         loggedIn = false;
         loginButton.textContent = "Log In";
     }
+    showElements(-1,-1);
 };
 
 let loginButton = document.getElementById("userLogin");
@@ -53,7 +54,11 @@ const showElements = function (filter, type) {
             alert(xhr.statusText);
         }
     }
-    xhr.send(`item_type=${type}&filter_type=${filter}`);
+    if (type === -1){
+        xhr.send(`item_type=${type}&filter_type=${filter}&onload=True`);
+    } else{
+        xhr.send(`item_type=${type}&filter_type=${filter}&onload=False`);
+    }
 };
 
 const createObject = function (items){
