@@ -79,6 +79,7 @@ border: 1 px transparent;
     min-height: 200px;
     overflow: auto;
     height: 300px;
+    width: 90%;
 }
 
 .item {
@@ -178,6 +179,29 @@ border: 1 px transparent;
 .review:last-child {
     margin-bottom: 0;
     padding-bottom: 0;
+}
+
+ol {
+  background: #ff9999;
+  padding: 20px;
+}
+
+ul {
+  background: #3399ff;
+  padding: 20px;
+}
+
+ol li {
+  background: #ffe5e5;
+  color: darkred;
+  padding: 5px;
+  margin-left: 35px;
+}
+
+ul li {
+  background: #cce5ff;
+  color: darkblue;
+  margin: 5px;
 }
 
 @media (max-width: 768px) {

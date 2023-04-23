@@ -17,6 +17,9 @@ clothing = db['clothing']
 compComponents = db['compComponents']
 monitors = db['monitors']
 snacks = db['snacks']
+reviews = db['reviews']
+
+item_types = {0: clothing, 1: compComponents, 2: monitors, 3: snacks}
 
 
 @app.route('/')
@@ -108,7 +111,7 @@ def item():
             "size": fl.request.form.get('size'),
             "colour": fl.request.form.get('colour'),
             "spec": fl.request.form.get('spec'),
-            "rating": None,
+            "rating": "No ratings.",
             "reviews": []
         }
         if type == 0:
@@ -149,59 +152,135 @@ def item():
 
     else:
         if type == 0:
-            check_old = clothing.find_one({'name': fl.request.form.get('name')})
-            if check_old:
-                result = clothing.delete_one({'name': fl.request.form.get('name')})
-                if result.deleted_count == 1:
-                    return fl.jsonify({'success': True, 'message': 'Item(Clothing) deleted successfully!'}), 200
-                else:
-                    return fl.jsonify({'success': False, 'message': 'Item not found!'}), 404
+            result = clothing.delete_one({'name': fl.request.form.get('name')})
+            if result.deleted_count == 1:
+                return fl.jsonify({'success': True, 'message': 'Item(Clothing) deleted successfully!'}), 200
+            else:
+                return fl.jsonify({'success': False, 'message': 'Item not found!'}), 404
 
-        if type == 1:
-            check_old = compComponents.find_one({'name': fl.request.form.get('name')})
-            if check_old:
-                result = compComponents.delete_one({'name': fl.request.form.get('name')})
-                if result.deleted_count == 1:
-                    return fl.jsonify({'success': True, 'message': 'Item(Computer Components) deleted successfully!'}), 200
-                else:
-                    return fl.jsonify({'success': False, 'message': 'Item not found!'}), 404
+        elif type == 1:
+            result = compComponents.delete_one({'name': fl.request.form.get('name')})
+            if result.deleted_count == 1:
+                return fl.jsonify(
+                    {'success': True, 'message': 'Item(Computer Components) deleted successfully!'}), 200
+            else:
+                return fl.jsonify({'success': False, 'message': 'Item not found!'}), 404
 
-        if type == 2:
-            check_old = monitors.find_one({'name': fl.request.form.get('name')})
-            if check_old:
-                result = monitors.delete_one({'name': fl.request.form.get('name')})
-                if result.deleted_count == 1:
-                    return fl.jsonify({'success': True, 'message': 'Item(Monitors) deleted successfully!'}), 200
-                else:
-                    return fl.jsonify({'success': False, 'message': 'Item not found!'}), 404
+        elif type == 2:
+            result = monitors.delete_one({'name': fl.request.form.get('name')})
+            if result.deleted_count == 1:
+                return fl.jsonify({'success': True, 'message': 'Item(Monitors) deleted successfully!'}), 200
+            else:
+                return fl.jsonify({'success': False, 'message': 'Item not found!'}), 404
 
-        if type == 3:
-            check_old = snacks.find_one({'name': fl.request.form.get('name')})
-            if check_old:
-                result = snacks.delete_one({'name': fl.request.form.get('name')})
-                if result.deleted_count == 1:
-                    return fl.jsonify({'success': True, 'message': 'Item(Snacks) deleted successfully!'}), 200
-                else:
-                    return fl.jsonify({'success': False, 'message': 'Item not found!'}), 404
+        elif type == 3:
+            result = snacks.delete_one({'name': fl.request.form.get('name')})
+            if result.deleted_count == 1:
+                return fl.jsonify({'success': True, 'message': 'Item(Snacks) deleted successfully!'}), 200
+            else:
+                return fl.jsonify({'success': False, 'message': 'Item not found!'}), 404
         else:
             return fl.jsonify({'success': False, 'message': 'Wrong type value!'}), 405
 
 
 @app.route('/list', methods=['POST'])
 def listItems():
+    filter_num = int(fl.request.form.get('filter_type'))
     type = int(fl.request.form.get('item_type'))
-    if type == 0:
-        documents = list(clothing.find({}, {'_id': 0}))
-    elif type == 1:
-        documents = list(compComponents.find({}, {'_id': 0}))
-    elif type == 2:
-        documents = list(monitors.find({}, {'_id': 0}))
-    elif type == 3:
-        documents = list(snacks.find({}, {'_id': 0}))
+
+    if filter_num == -1:
+        documents = list(item_types.get(type).find({}, {'_id': 0}))
+    elif filter_num == 0:  # Highest Rating
+        documents = list(item_types.get(type).find({}, {'_id': 0}).sort('rating', 1))
+    elif filter_num == 1:  # Lowest Rating
+        documents = list(item_types.get(type).find({}, {'_id': 0}).sort('rating', 1))
+    elif filter_num == 2:  # Cheap to Expensive
+        documents = list(item_types.get(type).find({}, {'_id': 0}).sort('price', 1))
+    elif filter_num == 3:  # Expensive to Cheap
+        documents = list(item_types.get(type).find({}, {'_id': 0}).sort('price', 1))
     else:
         documents = list()
 
+    for document in documents:
+        list_reviews = list()
+        review_ids = document["reviews"]
+        for id in review_ids:
+            res = reviews.find_one({"_id": id})
+            username = users.find_one({"_id": res["user_id"]})["username"]
+            list_reviews.append({"username": username, "inner": res["review"], "rating": res["rating"]})
+        document["reviews"] = list_reviews
+
     return fl.jsonify(documents), 200
+
+
+@app.route('/review', methods=['POST'])
+def postItems():
+    username = fl.session.get('username', None)
+    if username:
+        type = int(fl.request.form.get('type'))
+        item_name = fl.request.form.get('item_name')
+        review = fl.request.form.get('review')
+        rating = int(fl.request.form.get('rating'))
+
+        curr_user = users.find_one({"username": username})
+        curr_item = item_types.get(type).find_one({"name": item_name})
+
+        # check if the user has a review before
+        user_reviews = curr_user.get("reviews", [])
+        curr_review_id = None
+        for r in user_reviews:
+            is_found = item_types.get(type).find_one({"name": item_name, "reviews": {"$in": [r]}})
+            if is_found is not None:
+                curr_review_id = r
+                break
+
+        if curr_review_id:
+            if review != "":
+                query = {"$set": {"rating": rating, "review": review}}
+            else:
+                query = {"$set": {"rating": rating}}
+            review_result = reviews.update_one({"_id": curr_review_id}, query)
+            if review_result.modified_count > 0:
+                avg_rating = find_avg_rating(curr_item["name"], type)
+                item_types.get(type).update_one({"name": item_name}, {"$set": {"rating": avg_rating}})
+                return fl.jsonify({'success': True, 'message': 'Review is updated.'}), 200
+            else:
+                return fl.jsonify({'success': False, 'message': 'Review can not be updated.'}), 405
+        else:
+            new_review = {
+                "user_id": curr_user["_id"],
+                "rating": rating,
+                "review": review
+            }
+            result = reviews.insert_one(new_review)
+            review_id = result.inserted_id
+            if not result.acknowledged:
+                return fl.jsonify({'success': False, 'message': 'Can not saved to the database!'}), 405
+            item_types.get(type).find_one({"name": item_name})
+            user_result = users.update_one({"username": username}, {"$push": {"reviews": review_id}})
+            review_result = item_types.get(type).update_one({"_id": curr_item["_id"]},
+                                                            {"$push": {"reviews": review_id}})
+
+            if user_result.modified_count > 0 and review_result.modified_count > 0:
+                avg_rating = find_avg_rating(curr_item["name"], type)
+                item_types.get(type).update_one({"name": item_name}, {"$set": {"rating": avg_rating}})
+                return fl.jsonify({'success': True, 'message': 'Review is saved.'}), 200
+            else:
+                return fl.jsonify({'success': False, 'message': 'Review can not be updated!'}), 405
+
+    else:
+        return fl.jsonify({'success': False, 'message': 'User not logged in!'}), 405
+
+
+def find_avg_rating(item_name, type):
+    item_reviews_ids = item_types.get(type).find_one({"name": item_name})["reviews"]
+    list_ratings = list()
+    for id in item_reviews_ids:
+        list_ratings.append(reviews.find_one({"_id": id})["rating"])
+
+    if len(list_ratings) == 0:
+        return 0
+    return sum(list_ratings) / len(list_ratings)
 
 
 if __name__ == '__main__':
