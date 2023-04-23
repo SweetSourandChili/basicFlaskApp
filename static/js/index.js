@@ -11,7 +11,6 @@ window.onload = function () {
         loggedIn = false;
         loginButton.textContent = "Log In";
     }
-    showElements(-1,-1);
 };
 
 let loginButton = document.getElementById("userLogin");

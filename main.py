@@ -263,7 +263,7 @@ def postItems():
                 return fl.jsonify({'success': False, 'message': 'Can not saved to the database!'}), 405
             item_types.get(type).find_one({"name": item_name})
             user_result = users.update_one({"username": username}, {"$push": {"reviews": review_id}})
-            review_result = item_types.get(type).update_one({"_id": curr_item["_id"]},
+            review_result = item_types.get(type).update_one({"name": item_name},
                                                             {"$push": {"reviews": review_id}})
 
             if user_result.modified_count > 0 and review_result.modified_count > 0:
